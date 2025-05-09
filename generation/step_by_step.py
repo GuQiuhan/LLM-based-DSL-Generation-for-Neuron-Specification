@@ -113,9 +113,9 @@ def step_by_step_gen(client: Client, steps: List[Step]):
             print(new_code)
 
             if step.validator:
-                #if index == 1 or index == 2 or index == 3 or index == 4:
+                # if index == 1 or index == 2 or index == 3 or index == 4:
                 #    result, msg = step.validator(new_code)
-                #else:
+                # else:
                 result = step.validator(new_code)
 
                 if result:
@@ -150,6 +150,7 @@ if __name__ == "__main__":
     import os
 
     import yaml
+    from request import TGIClient
     from rich.progress import (
         BarColumn,
         MofNCompleteColumn,
@@ -158,8 +159,6 @@ if __name__ == "__main__":
         TimeElapsedColumn,
         TimeRemainingColumn,
     )
-
-    from request import TGIClient
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -180,7 +179,6 @@ if __name__ == "__main__":
         os.makedirs(os.path.join(model_out_dir, "success"), exist_ok=True)
         os.makedirs(os.path.join(model_out_dir, "failure"), exist_ok=True)
 
-
     if os.path.exists(args.log_dir):
         shutil.rmtree(args.log_dir)
     os.makedirs(args.log_dir, exist_ok=True)
@@ -193,7 +191,6 @@ if __name__ == "__main__":
         format="%(asctime)s - %(levelname)s - %(message)s",
         filemode="a",
     )
-
 
     progress_bar = Progress(
         TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
@@ -239,7 +236,7 @@ if __name__ == "__main__":
     def generate_spec(api, doc, debug=False) -> str:
         steps = []
         # @qiuhan: TODO: need to be expanded to multi steps to improve the performance
-        # step 1: 
+        # step 1:
         # - few-shot prompting
         # - chain of thoughts
         steps.append(
@@ -258,8 +255,6 @@ Generation:
             )
         )
 
-        
-
         return step_by_step_gen(client, steps)
 
     prefix = os.path.join(os.path.dirname(__file__), "prompt/prompts")
@@ -275,12 +270,13 @@ Generation:
             logging.info(f"{datetime.now()} - Extracting {doc['api']}")
 
             for model_name, url in MODEL_ENDPOINTS.items():
-                
+
                 model_out_dir = os.path.join(args.output_dir, model_name)
                 success_dir = os.path.join(model_out_dir, "success")
                 failure_dir = os.path.join(model_out_dir, "failure")
+                api_name = doc["api"]
 
-                logging.info(f"\n[{doc["api"]}] → Model: {model_name} @ {url}")
+                logging.info(f"\nAPI: {api_name} -> Model: {model_name} @ {url}")
                 client = TGIClient(model=url, max_new_tokens=2048)
                 result, code, error = generate_spec(doc["api"], doc["doc"])
                 if not result:

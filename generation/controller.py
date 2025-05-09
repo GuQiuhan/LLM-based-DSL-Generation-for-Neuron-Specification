@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+
 from request import TGIClient
 
 # @qiuhan: update the IP
@@ -10,6 +11,7 @@ MODEL_ENDPOINTS = {
     "llama3-1B": "http://10.192.122.120:8085",
     "llama3-70B": "http://10.192.122.120:8086",
 }
+
 
 def run_multi_model_comparison(prompt: str, save_path: str = None):
     print(f"\n**********\n📌 Prompt:\n{prompt}\n**********\n")
@@ -27,12 +29,12 @@ def run_multi_model_comparison(prompt: str, save_path: str = None):
         save_path = f"comparison_results_{timestamp}.json"
 
     with open(save_path, "w", encoding="utf-8") as f:
-        json.dump({
-            "prompt": prompt,
-            "results": results
-        }, f, indent=2, ensure_ascii=False)
+        json.dump(
+            {"prompt": prompt, "results": results}, f, indent=2, ensure_ascii=False
+        )
 
     print(f"\n**********Results saved to {save_path}**********\n")
+
 
 if __name__ == "__main__":
     prompt = "Write a DSL abstract transformer for ReLU(x) over [l, u]. Ensure it is sound and tight."
