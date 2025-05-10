@@ -20,7 +20,7 @@ DOC_ROOTS = [
 BLOCK_LIST = [
     "torch.nn.functional.interpolate",
     "torch.nn.functional.pad",
-    "torch.nn.functional.relu",
+    #  "torch.nn.functional.relu",
     "torch.nn.functional.linear",
     "torch.nn.functional.leaky_relu",
     "torch.atan",
@@ -79,7 +79,7 @@ if __name__ == "__main__":
             docs[api] = doc
 
     print(len(docs), "API docs fetched")
-    prefix = os.path.join(os.path.dirname(__file__), "prompts")
+    prefix = os.path.join(os.path.dirname(__file__), "new_prompts")
     print(prefix)
     if not os.path.exists(prefix):
         os.mkdir(prefix)

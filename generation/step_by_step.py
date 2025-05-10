@@ -233,7 +233,7 @@ if __name__ == "__main__":
 
         return cmpln
 
-    def generate_spec(api, doc, debug=False) -> str:
+    def generate_spec(api, doc, dsl=None, debug=False) -> str:
         steps = []
         # @qiuhan: TODO: need to be expanded to multi steps to improve the performance
         # step 1:
@@ -244,14 +244,21 @@ if __name__ == "__main__":
                 prompter=lambda code: f"""
 API: {api}
 Domain Knowledge: {doc}
+DSL: {dsl}
 Tips for Generation:
+- Ensure that the transformer over-approximates all possible outputs for the given input interval.
+- Use linear constraints that closely follow the true shape of the target function to improve tightness.
+- Minimize the distance between the upper and lower bounds while maintaining soundness.
+- Avoid redundant or overly loose constraints that do not contribute to bounding precision.
+- Include comments or variable names that indicate semantic alignment with the original operator (e.g., slope, bias).
+- Return only the updated DSL rule
 Error Example:
 Class Context:
 Generation:
 """,
                 composer=remove_comments,
                 eos=["\n# END"],
-                validator=None,
+                validator=None,  # @qiuhan: Constraintflow
             )
         )
 
@@ -278,7 +285,9 @@ Generation:
 
                 logging.info(f"\nAPI: {api_name} -> Model: {model_name} @ {url}")
                 client = TGIClient(model=url, max_new_tokens=2048)
-                result, code, error = generate_spec(doc["api"], doc["doc"])
+                result, code, error = generate_spec(
+                    doc["api"], doc["doc"]
+                )  # @qiuhan: How to constrcut the DSL here?
                 if not result:
                     target_path = os.path.join(failure_dir, f"{doc['api']}.txt")
                     with open(target_path, "w") as f:

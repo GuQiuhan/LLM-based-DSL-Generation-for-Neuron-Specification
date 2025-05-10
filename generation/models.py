@@ -4,6 +4,9 @@ import torch
 from flask import Flask, jsonify, request
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
+# login to the hugging_face with the token below in the server to access models
+# TOKEN="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" # token `qiuhan_read`: hugging_face token to llama3.2; llama3.3
+
 
 def launch_model_server(model_id: str, port: int, max_new_tokens: int = 256):
     print(f"[✓] Starting server for {model_id} on port {port}")
